@@ -1,16 +1,38 @@
 const express = require('express');
+const redis = require('redis');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const app = express();
+
+const RedisStore = require('connect-redis')(session);
+const client = redis.createClient();
 
 const dotenv = require('dotenv');
 dotenv.config();
 
 const TWO_HOURS = 1000 * 60 * 60 * 2;
-const { PORT, NODE_ENV, SESSION_NAME, SESSION_SECRET } = process.env;
+const {
+  PORT,
+  NODE_ENV,
+  SESSION_NAME,
+  SESSION_SECRET,
+  REDIS_HOST,
+  REDIS_PORT,
+  REDIS_TTL
+} = process.env;
+
+client.on('connect', () => {
+  console.log('Connected to redis..');
+});
 
 app.use(
   session({
+    store: new RedisStore({
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+      ttl: REDIS_TTL,
+      client
+    }),
     name: SESSION_NAME,
     secret: SESSION_SECRET,
     resave: false,
