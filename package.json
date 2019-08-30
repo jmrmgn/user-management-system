@@ -1,0 +1,29 @@
+{
+  "name": "user-management-system",
+  "version": "1.0.0",
+  "description": "User Management System with session",
+  "main": "index.js",
+  "scripts": {
+    "start": "node",
+    "dev": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meep26/user-management-system.git"
+  },
+  "author": "Jomar Magno",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meep26/user-management-system/issues"
+  },
+  "homepage": "https://github.com/meep26/user-management-system#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
