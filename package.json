@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "lint-test": "./node_modules/.bin/eslint --ignore-path .gitignore ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-test",
+      "pre-push": "npm run lint-test"
+    }
   },
   "repository": {
     "type": "git",
@@ -24,6 +31,16 @@
     "express-session": "^1.16.2"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard-react": "^9.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "^3.0.5",
     "nodemon": "^1.19.1"
   }
 }

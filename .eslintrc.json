@@ -1,0 +1,20 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["standard", "standard-react"],
+  "rules": {
+    "indent": "off",
+    "semi": "off",
+    "quotes": "off",
+    "jsx-quotes": ["error", "prefer-double"],
+    "space-infix-ops": "off",
+    "lines-between-class-members": "off",
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ]
+  }
+}

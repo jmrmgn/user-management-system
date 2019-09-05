@@ -31,7 +31,7 @@ app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
 /*
   Home/Index
     -> Login, Sign up
-  Login 
+  Login
     -> Sign up
   Sign Up
     -> Login
