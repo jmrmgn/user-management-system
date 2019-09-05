@@ -1,6 +1,8 @@
 const express = require('express');
 const session = require('express-session');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
+const typeDefs = require('./graphql/typeDefs');
+const resolvers = require('./graphql/resolvers');
 const mongoose = require('mongoose');
 
 const dotenv = require('dotenv');
@@ -9,43 +11,6 @@ dotenv.config();
 const TWO_HOURS = 1000 * 60 * 60 * 2;
 const { PORT, NODE_ENV, SESSION_NAME, SESSION_SECRET, DB_URI } = process.env;
 const IN_PROD = NODE_ENV === 'production';
-
-const books = [
-  {
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling'
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton'
-  }
-];
-
-// Type definitions define the "shape" of your data and specify
-// which ways the data can be fetched from the GraphQL server.
-const typeDefs = gql`
-  # Comments in GraphQL are defined with the hash (#) symbol.
-
-  # This "Book" type can be used in other type declarations.
-  type Book {
-    title: String
-    author: String
-  }
-
-  # The "Query" type is the root of all GraphQL queries.
-  # (A "Mutation" type will be covered later on.)
-  type Query {
-    books: [Book]
-  }
-`;
-
-// Resolvers define the technique for fetching the types in the
-// schema.  We'll retrieve books from the "books" array above.
-const resolvers = {
-  Query: {
-    books: () => books
-  }
-};
 
 (async () => {
   try {
