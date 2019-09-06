@@ -38,13 +38,13 @@ const IN_PROD = NODE_ENV === 'production';
         store,
         name: SESSION_NAME,
         secret: SESSION_SECRET,
-        resave: false,
+        resave: true, // For refreshing of expiry of cookie base on the user activity
+        rolling: true,
         saveUninitialized: false,
         cookie: {
-          httpOnly: true,
-          maxAge: TWO_HOURS,
+          maxAge: parseInt(TWO_HOURS),
           sameSite: true,
-          secure: NODE_ENV === 'production'
+          secure: IN_PROD
         }
       })
     );
