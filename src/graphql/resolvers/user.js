@@ -6,13 +6,13 @@ const { User } = require('../../models');
 
 const Query = {
   // TODO: Validation, Session
-  async users(root, args, { req }, info) {
+  users: async (root, args, { req }, info) => {
     Auth.checkSignedIn(req);
 
     const users = await User.find({});
     return users;
   },
-  async user(root, args, { req }, info) {
+  user: async (root, args, { req }, info) => {
     Auth.checkSignedIn(req);
 
     const { id } = args;
@@ -20,8 +20,7 @@ const Query = {
     const user = await User.findById(id);
     return user;
   },
-  async login(root, { username, password }, { req }, info) {
-    Auth.checkSignedOut(req);
+  login: async (root, { username, password }, { req }, info) => {
     const user = await Auth.attemptSignIn(username, password);
     req.session.userId = user._id;
     return user;
@@ -30,7 +29,7 @@ const Query = {
 
 const Mutation = {
   // TODO: Validation, Session
-  async signUp(root, args, { req }, info) {
+  signUp: async (root, args, { req }, info) => {
     Auth.checkSignedOut(req);
 
     const { username } = args;
@@ -42,7 +41,7 @@ const Mutation = {
 
     return newUser;
   },
-  signOut(root, args, { req, res }, info) {
+  signOut: (root, args, { req, res }, info) => {
     Auth.checkSignedIn(req);
     return Auth.signOut(req, res);
   }
