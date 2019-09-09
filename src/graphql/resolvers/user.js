@@ -77,26 +77,26 @@ module.exports = {
       } catch (e) {
         return e;
       }
+    },
+    removeFriend: async (root, { id }, { req, res }, info) => {
+      const userId = req.session.userId;
+
+      try {
+        const { user, isInFriends } = await checkAddToFriends(userId, id);
+
+        if (!isInFriends) {
+          throw new UserInputError('User is not in your friendlist');
+        } else {
+          user.friends = user.friends.filter(
+            currentUser => String(currentUser) !== id
+          );
+          await user.save();
+          return user;
+        }
+      } catch (e) {
+        return e;
+      }
     }
-    // removeFriend: async (root, { id }, { req, res }, info) => {
-    //   const userId = req.session.userId;
-
-    //   try {
-    //     const { user, isInFriends } = await checkAddToFriends(userId, id);
-
-    //     if (String(userId) === String(id)) {
-    //       throw new UserInputError("You can't add yourself");
-    //     } else if (isInFriends) {
-    //       throw new UserInputError('Already friends');
-    //     } else {
-    //       user.friends = [...user.friends, id];
-    //       await user.save();
-    //       return user;
-    //     }
-    //   } catch (e) {
-    //     return e;
-    //   }
-    // }
   },
   User: {
     friends: async (user, args, { req }, info) => {
