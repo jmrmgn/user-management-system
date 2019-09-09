@@ -5,16 +5,12 @@ const Auth = require('../../auth');
 const { User } = require('../../models');
 
 const Query = {
-  // TODO: Validation, Session
+  // TODO: Validation
   users: async (root, args, { req }, info) => {
-    Auth.checkSignedIn(req);
-
     const users = await User.find({});
     return users;
   },
   user: async (root, args, { req }, info) => {
-    Auth.checkSignedIn(req);
-
     const { id } = args;
     if (!isValid(id)) throw new UserInputError(`${id} is not a valid User ID`);
     const user = await User.findById(id);
@@ -28,10 +24,8 @@ const Query = {
 };
 
 const Mutation = {
-  // TODO: Validation, Session
+  // TODO: Validation
   signUp: async (root, args, { req }, info) => {
-    Auth.checkSignedOut(req);
-
     const { username } = args;
     const user = await User.findOne({ username });
     if (user) throw new UserInputError(`${username} is already taken.`);
@@ -42,7 +36,6 @@ const Mutation = {
     return newUser;
   },
   signOut: (root, args, { req, res }, info) => {
-    Auth.checkSignedIn(req);
     return Auth.signOut(req, res);
   }
 };

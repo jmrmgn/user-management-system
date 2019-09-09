@@ -5,6 +5,7 @@ const RedisStore = require('connect-redis')(session);
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./graphql/typeDefs');
 const resolvers = require('./graphql/resolvers');
+const schemaDirectives = require('./graphql/directives');
 const mongoose = require('mongoose');
 
 const TWO_HOURS = 1000 * 60 * 60 * 2;
@@ -52,6 +53,7 @@ const IN_PROD = NODE_ENV === 'production';
     const apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
+      schemaDirectives,
       playground: IN_PROD
         ? false
         : {
