@@ -6,6 +6,11 @@ const { User } = require('../../models');
 
 const Query = {
   // TODO: Validation
+  me: async (root, args, { req }, info) => {
+    const userId = req.session.userId;
+    const user = await User.findById(userId);
+    return user;
+  },
   users: async (root, args, { req }, info) => {
     const users = await User.find({});
     return users;
