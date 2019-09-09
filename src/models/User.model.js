@@ -6,7 +6,13 @@ const userSchema = new Schema(
   {
     name: String,
     username: String,
-    password: String
+    password: String,
+    friends: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: 'User'
+      }
+    ]
   },
   { timestamps: true }
 );
