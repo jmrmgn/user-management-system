@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import { Menu } from 'antd';
 
 function Navbar({ location }) {
-  const [currentKey, setCurrentKey] = useState(location.pathname);
-
-  const handleClick = ({ key }) => setCurrentKey(key);
   return (
-    <Menu mode="horizontal" onClick={handleClick} selectedKeys={[currentKey]}>
+    <Menu mode="horizontal" selectedKeys={[location.pathname]}>
       <Menu.Item key="/">
         <Link to="/">Home</Link>
       </Menu.Item>
