@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Link, withRouter } from 'react-router-dom';
 import { Card, Form, Row, Col, Input, Icon, Button } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
@@ -7,25 +8,31 @@ import gql from 'graphql-tag';
 const loginQuery = gql`
   mutation($username: String!, $password: String!) {
     login(username: $username, password: $password) {
-      _id
-      name
-      username
+      token
+      user {
+        _id
+        name
+      }
     }
   }
 `;
 
 function Login(props) {
+  const { history } = props;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [login] = useMutation(loginQuery);
 
   const handleClick = async () => {
     const variables = { username, password };
-    const user = await login({
+    const { data } = await login({
       variables
     });
+    const token = data.login.token;
 
-    console.log(user);
+    localStorage.setItem('token', token);
+
+    history.push('/users');
   };
 
   return (
@@ -60,6 +67,8 @@ function Login(props) {
   );
 }
 
-Login.propTypes = {};
+Login.propTypes = {
+  history: PropTypes.object
+};
 
-export default Login;
+export default withRouter(Login);
