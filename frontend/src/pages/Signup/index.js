@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import { Card, Row, Col, Input, Icon, Button } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+
+// Utils
+import { isAuthenticated } from '../../utils';
 
 const SignUpMutation = gql`
   mutation SignUpMutation(
@@ -26,6 +29,10 @@ function Signup({ history }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [signUp, { loading }] = useMutation(SignUpMutation);
+
+  useEffect(() => {
+    isAuthenticated() && history.push('/home');
+  }, []);
 
   const handleSubmit = async () => {
     const variables = { name, username, password };

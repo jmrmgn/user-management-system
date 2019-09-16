@@ -13,6 +13,9 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { Navbar } from './layout';
 
 // Components
+import { PrivateRoute } from './components';
+
+// Pages
 import { Home, Users, Login, Signup } from './pages';
 
 const httpLink = createHttpLink({
@@ -37,6 +40,7 @@ const client = new ApolloClient({
 });
 
 const { Content } = Layout;
+
 function App(props) {
   return (
     <ApolloProvider client={client}>
@@ -52,7 +56,7 @@ function App(props) {
                 style={{ minHeight: 500 }}
               >
                 <Route exact path="/" component={Home} />
-                <Route exact path="/users" component={Users} />
+                <PrivateRoute exact path="/users" component={Users} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/signup" component={Signup} />
               </Row>

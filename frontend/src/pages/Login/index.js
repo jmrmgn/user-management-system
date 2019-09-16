@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import { Card, Form, Row, Col, Input, Icon, Button } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+
+// Utils
+import { isAuthenticated } from '../../utils';
 
 const loginQuery = gql`
   mutation($username: String!, $password: String!) {
@@ -22,6 +25,10 @@ function Login(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [login, { loading }] = useMutation(loginQuery);
+
+  useEffect(() => {
+    isAuthenticated() && history.push('/home');
+  }, []);
 
   const handleClick = async () => {
     const variables = { username, password };
