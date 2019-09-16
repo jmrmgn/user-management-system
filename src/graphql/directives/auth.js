@@ -1,6 +1,8 @@
-const { SchemaDirectiveVisitor } = require('apollo-server-express');
+const {
+  SchemaDirectiveVisitor,
+  AuthenticationError
+} = require('apollo-server-express');
 const { defaultFieldResolver } = require('graphql');
-const { checkSignedIn } = require('../../auth');
 
 class AuthDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field) {
@@ -8,7 +10,8 @@ class AuthDirective extends SchemaDirectiveVisitor {
 
     field.resolve = function(...args) {
       const [, , context] = args;
-      checkSignedIn(context.req);
+      const user = context.user;
+      if (!user) throw new AuthenticationError('Unauthorized');
 
       return resolve.apply(this, args);
     };
