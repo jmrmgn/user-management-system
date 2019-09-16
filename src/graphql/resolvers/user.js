@@ -37,15 +37,15 @@ module.exports = {
       isValidId(id);
       const user = await User.findById(id);
       return user;
-    },
-    login: async (root, { username, password }, { req }, info) => {
-      const user = await Auth.attemptSignIn(username, password);
-      req.session.userId = user._id;
-      return user;
     }
   },
   Mutation: {
     // TODO: Validation
+    login: async (root, { username, password }, { req, res }, info) => {
+      const user = await Auth.attemptSignIn(username, password);
+      req.session.userId = user._id;
+      return user;
+    },
     signUp: async (root, args, { req }, info) => {
       const { username } = args;
       const user = await User.findOne({ username });

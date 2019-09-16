@@ -6,12 +6,12 @@ module.exports = gql`
     me: User @auth
     users: [User!]! @auth
     user(id: ID!): User @auth
-    login(username: String!, password: String!): User @guest
   }
 
   extend type Mutation {
     addFriend(id: ID!): User! @auth
     removeFriend(id: ID!): User! @auth
+    login(username: String!, password: String!): User @guest
     signUp(name: String!, username: String!, password: String!): User @guest
     signOut: Boolean @auth
   }
