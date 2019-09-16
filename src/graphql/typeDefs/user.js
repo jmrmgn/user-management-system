@@ -11,9 +11,8 @@ module.exports = gql`
   extend type Mutation {
     addFriend(id: ID!): User! @auth
     removeFriend(id: ID!): User! @auth
-    login(username: String!, password: String!): User @guest
-    signUp(name: String!, username: String!, password: String!): User @guest
-    signOut: Boolean @auth
+    login(username: String!, password: String!): AuthResponse 
+    signUp(name: String!, username: String!, password: String!): AuthResponse
   }
 
   type User {
@@ -23,5 +22,10 @@ module.exports = gql`
     friends: [User]!
     createdAt: Date @date(format: "${dateTimeFormat}")
     updatedAt: Date @date(format: "${dateTimeFormat}")
+  }
+
+  type AuthResponse {
+    token: String
+    user: User
   }
 `;

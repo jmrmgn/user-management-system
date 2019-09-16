@@ -5,6 +5,8 @@ const resolvers = require('./graphql/resolvers');
 const schemaDirectives = require('./graphql/directives');
 const mongoose = require('mongoose');
 
+const { getUser } = require('./auth');
+
 const { PORT, FRONTEND_URL, NODE_ENV, DB_URI } = process.env;
 const IN_PROD = NODE_ENV === 'production';
 
@@ -19,14 +21,14 @@ const IN_PROD = NODE_ENV === 'production';
       typeDefs,
       resolvers,
       schemaDirectives,
-      playground: IN_PROD
-        ? false
-        : {
-            settings: {
-              'request.credentials': 'include'
-            }
-          },
-      context: ({ req, res }) => ({ req, res })
+      playground: !IN_PROD,
+      context: ({ req }) => {
+        const tokenWithBearer = req.headers.authorization || '';
+        const token = tokenWithBearer.split(' ')[1];
+        const user = getUser(token);
+
+        return { req, user };
+      }
     });
 
     apolloServer.applyMiddleware({
@@ -41,14 +43,3 @@ const IN_PROD = NODE_ENV === 'production';
     console.log(e);
   }
 })();
-
-/*
-  Home/Index
-    -> Login, Sign up
-  Login
-    -> Sign up
-  Sign Up
-    -> Login
-  Dashboard
-    -> Logout
-*/
