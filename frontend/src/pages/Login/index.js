@@ -21,7 +21,7 @@ function Login(props) {
   const { history } = props;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [login] = useMutation(loginQuery);
+  const [login, { loading }] = useMutation(loginQuery);
 
   const handleClick = async () => {
     const variables = { username, password };
@@ -57,8 +57,13 @@ function Login(props) {
             <small>
               No account yet? <Link to="/signup">Sign up here.</Link>
             </small>
-            <Button block type="primary" onClick={handleClick}>
-              Submit
+            <Button
+              block
+              type="primary"
+              onClick={handleClick}
+              loading={loading}
+            >
+              {loading ? 'Please wait...' : 'Submit'}
             </Button>
           </Card>
         </Col>
