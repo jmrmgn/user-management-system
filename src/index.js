@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 const TWO_HOURS = 1000 * 60 * 60 * 2;
 const {
   PORT,
+  FRONTEND_URL,
   NODE_ENV,
   SESSION_NAME,
   SESSION_SECRET,
@@ -64,7 +65,10 @@ const IN_PROD = NODE_ENV === 'production';
       context: ({ req, res }) => ({ req, res })
     });
 
-    apolloServer.applyMiddleware({ app, cors: false });
+    apolloServer.applyMiddleware({
+      app,
+      cors: { origin: FRONTEND_URL, credentials: true }
+    });
 
     app.listen(PORT, () =>
       console.log(`http://localhost:${PORT}${apolloServer.graphqlPath}`)
