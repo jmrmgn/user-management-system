@@ -1,3 +1,8 @@
-import { isAuthenticated, signOut } from './auth';
+import { isAuthenticated, currentUser, signOut } from './auth';
 
-export { isAuthenticated, signOut };
+export {
+  // Auth
+  isAuthenticated,
+  currentUser,
+  signOut
+};
