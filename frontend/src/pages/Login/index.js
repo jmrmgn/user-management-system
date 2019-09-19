@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import { Card, Form, Row, Col, Input, Icon, Button } from 'antd';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 // Utils
@@ -21,14 +21,15 @@ const loginQuery = gql`
 `;
 
 function Login(props) {
+  const client = useApolloClient();
   const { history } = props;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [login, { loading }] = useMutation(loginQuery);
 
   useEffect(() => {
-    isAuthenticated() && history.push('/home');
-  }, []);
+    isAuthenticated() && history.push('/');
+  }, [history]);
 
   const handleClick = async () => {
     const variables = { username, password };
@@ -36,9 +37,10 @@ function Login(props) {
       variables
     });
     const token = data.login.token;
+    const user = data.login.user;
 
+    client.writeData({ data: { currentUser: user } });
     localStorage.setItem('token', token);
-
     history.push('/users');
   };
 

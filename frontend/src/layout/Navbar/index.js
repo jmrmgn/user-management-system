@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useApolloClient } from '@apollo/react-hooks';
 import { Link, withRouter } from 'react-router-dom';
 import { Menu } from 'antd';
 
@@ -7,8 +8,9 @@ import { Menu } from 'antd';
 import { isAuthenticated, signOut } from '../../utils';
 
 function Navbar({ location, history }) {
+  const client = useApolloClient();
   const handleSignOut = () => {
-    signOut();
+    signOut(client);
     history.push('/login');
   };
 

@@ -31,8 +31,8 @@ function Signup({ history }) {
   const [signUp, { loading }] = useMutation(SignUpMutation);
 
   useEffect(() => {
-    isAuthenticated() && history.push('/home');
-  }, []);
+    isAuthenticated() && history.push('/');
+  }, [history]);
 
   const handleSubmit = async () => {
     const variables = { name, username, password };
