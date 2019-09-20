@@ -3,33 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 
+import { currentUser } from './utils/';
+
 import { ApolloClient } from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
+import { ApolloLink, Observable } from 'apollo-link';
 import { ApolloProvider } from '@apollo/react-hooks';
 
-import { currentUser } from './utils/';
-import { ApolloLink } from 'apollo-link';
+const user = currentUser();
+const data = {
+  currentUser: user
+};
+const cache = new InMemoryCache({ data });
 
-const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql'
-});
-
-const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('token');
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : ''
-    }
-  };
-});
-
-const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
+const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     const { extensions, message } = graphQLErrors[0];
     if (extensions === 'UNAUTHENTICATED' || message === 'Unauthorized') {
@@ -43,28 +32,46 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 });
 
-const cache = new InMemoryCache();
-const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, authLink, httpLink]),
-  cache,
-  resolvers: {}
+const requestLink = new ApolloLink(
+  (operation, forward) =>
+    new Observable(observer => {
+      let handle;
+      Promise.resolve(operation)
+        .then(operation => {
+          const token = localStorage.getItem('token');
+          if (token) {
+            operation.setContext({
+              headers: {
+                authorization: `Bearer ${token}`
+              }
+            });
+          }
+        })
+        .then(() => {
+          handle = forward(operation).subscribe({
+            next: observer.next.bind(observer),
+            error: observer.error.bind(observer),
+            complete: observer.complete.bind(observer)
+          });
+        })
+        .catch(observer.error.bind(observer));
+
+      return () => {
+        if (handle) handle.unsubscribe();
+      };
+    })
+);
+
+const httpLink = new HttpLink({
+  uri: 'http://localhost:4000/graphql'
 });
 
-const user = currentUser();
-const data = {
-  currentUser: {
-    ...user,
-    __typename: 'User'
-  },
-  networkStatus: {
-    __typename: 'NetworkStatus',
-    isConnected: false
-  }
-};
+const client = new ApolloClient({
+  link: ApolloLink.from([errorLink, requestLink, httpLink]),
+  cache
+});
 
-cache.writeData({ data });
-
-client.onResetStore(() => cache.writeData({ data }));
+// cache.writeData({ data });
 
 ReactDOM.render(
   <ApolloProvider client={client}>

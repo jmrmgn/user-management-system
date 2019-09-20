@@ -16,10 +16,10 @@ const isAuthenticated = () => {
 
 const currentUser = () => {
   try {
-    const { id, name } = decodeToken();
-    return { _id: id, name };
+    const { id } = decodeToken();
+    return id;
   } catch (err) {
-    return undefined;
+    return null;
   }
 };
 

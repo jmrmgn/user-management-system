@@ -37,9 +37,9 @@ function Login(props) {
       variables
     });
     const token = data.login.token;
-    const user = data.login.user;
+    const { _id } = data.login.user;
 
-    client.writeData({ data: { currentUser: user } });
+    client.writeData({ data: { currentUser: _id } });
     localStorage.setItem('token', token);
     history.push('/users');
   };
