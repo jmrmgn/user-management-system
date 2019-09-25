@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Table, Card, Button } from 'antd';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import React from 'react';
+import { Table, Card } from 'antd';
+import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 const usersQuery = gql`
@@ -9,36 +9,12 @@ const usersQuery = gql`
       _id
       name
       username
-      friends {
-        _id
-        username
-      }
-    }
-  }
-`;
-
-const addFriendMutation = gql`
-  mutation AddFriend($id: ID!) {
-    addFriend(id: $id) {
-      _id
-      name
-      username
     }
   }
 `;
 
 function Users(props) {
-  // const currentUser = useQuery(currentUserQuery);
   const { loading, error, data } = useQuery(usersQuery);
-  const [currentId, setCurrentId] = useState(undefined);
-  const [addFriend, _addFriend] = useMutation(addFriendMutation);
-
-  const handleAddFriend = id => async e => {
-    setCurrentId(id);
-    await addFriend({
-      variables: { id }
-    });
-  };
 
   const columns = [
     {
@@ -50,22 +26,6 @@ function Users(props) {
       title: 'Username',
       dataIndex: 'username',
       key: 'username'
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => {
-        const id = record._id;
-
-        return (
-          <Button
-            onClick={handleAddFriend(id)}
-            loading={_addFriend.loading && currentId === id}
-          >
-            Add Friend
-          </Button>
-        );
-      }
     }
   ];
 
@@ -87,7 +47,5 @@ function Users(props) {
     </>
   );
 }
-
-Users.propTypes = {};
 
 export default Users;
