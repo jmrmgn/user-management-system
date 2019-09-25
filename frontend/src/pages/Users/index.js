@@ -14,7 +14,9 @@ const usersQuery = gql`
 `;
 
 function Users(props) {
-  const { loading, error, data } = useQuery(usersQuery);
+  const { loading, error, data } = useQuery(usersQuery, {
+    fetchPolicy: 'network-only'
+  });
 
   const columns = [
     {

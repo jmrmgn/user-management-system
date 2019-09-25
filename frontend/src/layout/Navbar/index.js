@@ -1,16 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import { Link, withRouter } from 'react-router-dom';
 import { Menu } from 'antd';
+import gql from 'graphql-tag';
 
 // Utils
 import { isAuthenticated, signOut } from '../../utils';
 
+const LogoutMutation = gql`
+  mutation {
+    logout
+  }
+`;
+
 function Navbar({ location, history }) {
-  const client = useApolloClient();
-  const handleSignOut = () => {
-    signOut(client);
+  const apolloClient = useApolloClient();
+  const [logout] = useMutation(LogoutMutation);
+
+  const handleSignOut = async () => {
+    await logout();
+    signOut(apolloClient);
     history.push('/login');
   };
 

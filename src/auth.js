@@ -16,8 +16,11 @@ const attemptSignIn = async (username, password) => {
   return user;
 };
 
-const getUser = token => {
+const getUser = req => {
   try {
+    const tokenWithBearer = req.headers.authorization || '';
+    const token = tokenWithBearer.split(' ')[1];
+
     if (token) return jwt.verify(token, SECRET_KEY);
     return null;
   } catch (err) {
@@ -25,13 +28,22 @@ const getUser = token => {
   }
 };
 
-const tokenSigning = async payload => {
-  const token = await jwt.sign(payload, SECRET_KEY, { expiresIn: 3600 });
+const tokenSigning = async (payload, isRefreshToken) => {
+  const expiresIn = isRefreshToken ? '7d' : '30s';
+  const token = await jwt.sign(payload, SECRET_KEY, { expiresIn });
   return token;
+};
+
+const sendRefreshToken = (res, token, isDestroy) => {
+  res.cookie('refresh_token', token, {
+    httpOnly: true,
+    ...(isDestroy ? { expires: new Date(Date.now()) } : false)
+  });
 };
 
 module.exports = {
   attemptSignIn,
   tokenSigning,
+  sendRefreshToken,
   getUser
 };
