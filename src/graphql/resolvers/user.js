@@ -32,6 +32,9 @@ module.exports = {
       const { _id, name } = user;
       const payload = { id: _id, name };
       const token = await Auth.tokenSigning(payload);
+      const refreshToken = await Auth.tokenSigning(payload, true);
+
+      Auth.sendRefreshToken(res, refreshToken);
 
       return { token, user };
     },
@@ -47,6 +50,11 @@ module.exports = {
       });
 
       return { token, user: newUser };
+    },
+    logout: (root, args, { _, res }, info) => {
+      Auth.sendRefreshToken(res, '', true);
+
+      return true;
     }
   }
 };

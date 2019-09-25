@@ -11,6 +11,7 @@ module.exports = gql`
   extend type Mutation {
     login(username: String!, password: String!): AuthResponse 
     signUp(name: String!, username: String!, password: String!): AuthResponse
+    logout: Boolean
   }
 
   type User {

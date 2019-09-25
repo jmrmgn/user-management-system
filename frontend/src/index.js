@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import { TokenRefreshLink } from 'apollo-link-token-refresh';
+import jwtDecode from 'jwt-decode';
 
 import { currentUser } from './utils/';
 
@@ -13,18 +15,21 @@ import { ApolloLink, Observable } from 'apollo-link';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 const user = currentUser();
+
 const data = {
   currentUser: user
 };
+
 const cache = new InMemoryCache({ data });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    const { extensions, message } = graphQLErrors[0];
-    if (extensions === 'UNAUTHENTICATED' || message === 'Unauthorized') {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
+    // const { extensions, message } = graphQLErrors[0];
+    // if (extensions === 'UNAUTHENTICATED' || message === 'Unauthorized') {
+    //   localStorage.removeItem('token');
+    //   window.location.href = '/login';
+    // }
+    // console.log(graphQLErrors, networkError);
   }
 
   if (networkError) {
@@ -63,15 +68,47 @@ const requestLink = new ApolloLink(
 );
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql'
+  uri: 'http://localhost:4000/graphql',
+  credentials: 'include'
 });
+
+const isTokenExpired = token => {
+  try {
+    const { exp } = jwtDecode(token);
+    if (Date.now() >= exp * 1000) return false;
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
 
 const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, requestLink, httpLink]),
+  link: ApolloLink.from([
+    new TokenRefreshLink({
+      accessTokenField: 'token',
+      isTokenValidOrUndefined: () => {
+        const token = localStorage.getItem('token');
+        return isTokenExpired(token) || !token;
+      },
+      fetchAccessToken: () => {
+        return fetch('http://localhost:4000/refresh_token', {
+          method: 'POST',
+          credentials: 'include'
+        });
+      },
+      handleFetch: token => {
+        localStorage.setItem('token', token);
+      },
+      handleError: err => {
+        console.error(err);
+      }
+    }),
+    errorLink,
+    requestLink,
+    httpLink
+  ]),
   cache
 });
-
-// cache.writeData({ data });
 
 ReactDOM.render(
   <ApolloProvider client={client}>
