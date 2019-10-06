@@ -1,3 +1,4 @@
+import Alert from './Alert';
 import PrivateRoute from './PrivateRoute';
 
-export { PrivateRoute };
+export { Alert, PrivateRoute };
