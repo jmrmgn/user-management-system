@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
-import { Card, Form, Row, Col, Input, Icon, Button, Alert } from 'antd';
+import { Card, Form, Row, Col, Input, Icon, Button } from 'antd';
+import { Alert } from '../../components';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
@@ -65,15 +66,7 @@ function Login(props) {
       }) => (
         <>
           <Form autoComplete="off">
-            {error && (
-              <Alert
-                message="Error"
-                description={error.message}
-                type="error"
-                showIcon
-                style={{ marginBottom: 10 }}
-              />
-            )}
+            {error && <Alert type="error" message={error.message} />}
 
             <Row>
               <Col span={12}>
